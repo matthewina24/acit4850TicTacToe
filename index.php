@@ -7,6 +7,8 @@
     <body>
 <?php
         
+ini_set('display_errors', 'On');
+error_reporting(E_ALL);
         
         $position = $_GET['board'];
         $squares = str_split($position);
@@ -23,12 +25,15 @@
         
         class Game{
              var $position;
+             var $squaresLocal;
              
             function __construct($squares){
                 $this->position = $squares;
+                $this->squaresLocal = $squares;
             }
             
             function winner($token) {
+                echo "Check for winner";
                 $won = false;
                 for ($row = 0; $row < 3; $row++) {
                     if (($this->position[3 * $row] == $token) && ($this->position[3 * $row + 1] == $token) && ($this->position[3 * row + 2] == $token))
@@ -63,6 +68,8 @@
                 echo '</table>';
             }
             
+            
+             
             function show_cell($which)
             {
                 $token = $this->position[$which];
@@ -70,7 +77,8 @@
                 if($token <> '-') return '<td>'.$token.'</td>';
                 //now the hard case
                 $this->newposition = $this->position; // copy the original
-                $this->newposition[$which] = 'o'; //this would be their move
+                $nextVal = $this->pick_move();
+                $this->newposition[$which] = $nextVal; //this would be their move
                 $move = implode($this->newposition); //make a string from the board array
                 
                 $link = './?board='.$move; //this is what want the link to be
@@ -78,8 +86,36 @@
                 return '<td><a href="'.$link.'">-</a></td>';
                 
             }
-          
+            
+             function pick_move(){
+              
+                 $xcounter = 0;
+                 $ocounter = 0;
+                 //print_r($this->squaresLocal);
+                 foreach ($this->squaresLocal as $value) {
+                   if ($value == "x"){
+                       $xcounter++;
+                       //echo "Adding to x";
+                   }
+                   else if ($value == "o"){
+                       $ocounter++;
+                       //echo "Adding to o";
+                   }
+                }   
+                   //echo "PICK_MOVE() invoked, xcounter " . $xcounter . " ocounter " . $ocounter;
+                   
+                   //Now compare the two counter
+                   if($xcounter > $ocounter){
+                       return "o";
+                   }
+                   else{
+                       return "x";
+                   }
                 
+                return "-";
+            } 
+          
+              
                 
             
         }
@@ -87,6 +123,5 @@
     </body>
 
     </html>
-
 
 
