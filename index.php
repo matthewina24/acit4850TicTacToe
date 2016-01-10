@@ -6,11 +6,16 @@
     </head>
     <body>
         <?php
-        $position = $_GET['board'];
+        // gets URL and translates into board
+        $position = $_GET['board']; 
+        //splits string into array for each square
         $squares = str_split($position);
 
         $game = new Game($squares);
         $game->display();
+        //-----------------------------------------------------------------
+        //Main game logic
+        //-----------------------------------------------------------------
         if ($game->winner('x'))
             echo 'You win. Lucky Guesses!';
         else if ($game->winner('o'))
@@ -28,19 +33,23 @@
                 $this->position = $squares;
                 $this->squaresLocal = $squares;
             }
-
+             //-----------------------------------------------------------------
+             //Function to check for all row matches, column matches, and the 2 
+             //diagonal matches
+            //-----------------------------------------------------------------
             function winner($token) {
                 $won = false;
-
+                //checks for matches on rows, for loop to go through each row
                 for ($row = 0; $row < 3; $row++) {
                     if (($this->position[$row * 3] == $token) && ($this->position[($row * 3) + 1] == $token) && ($this->position[($row * 3) + 2] == $token))
                         $won = true;
                 }
-
+                //checks for matches on columns
                 for ($col = 0; $col < 3; $col++) {
                     if (($this->position[$col] == $token) && ($this->position[$col + 3] == $token) && ($this->position[$col + 6] == $token))
                         $won = true;
                 }
+                //checks for matches in the 2 diagonals
                 if (($this->position[0] == $token) &&
                         ($this->position[4] == $token) &&
                         ($this->position[8] == $token)) {
@@ -52,7 +61,9 @@
                 }
                 return $won;
             }
-
+            //-----------------------------------------------------------------
+            //Renders Game baord and calls show cell function to display when clicked
+            //-----------------------------------------------------------------
             function display() {
                 echo '<table cols="3" style="font-size:large;font-weight:bold">';
                 echo '<tr>'; // open the first row
@@ -64,7 +75,10 @@
                 echo '</tr>';
                 echo '</table>';
             }
-
+             //-----------------------------------------------------------------
+             //Function that displays each cell and alternates move dependent on 
+             //whoever has had more turns
+            //-----------------------------------------------------------------
             function show_cell($which) {
                 $token = $this->position[$which];
                 //deal with the easy case
@@ -80,7 +94,9 @@
                 // so return a cell containing an anchor and showing a hyphen
                 return '<td><a href="' . $link . '">-</a></td>';
             }
-
+ //-----------------------------------------------------------------
+        //Function to determine who's move it is. Whoever has gone less, goes next.
+        //-----------------------------------------------------------------
             function pick_move() {
 
                 $xcounter = 0;
